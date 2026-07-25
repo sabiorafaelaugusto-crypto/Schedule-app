@@ -1,0 +1,6 @@
+{
+  "appId": "com.rafa.prospectingschedule",
+  "appName": "Prospecting Schedule",
+  "webDir": "dist",
+  "bundledWebRuntime": false
+}
