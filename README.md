@@ -1,31 +1,63 @@
 # Prospecting Schedule
 
-A mobile-first web app to organize job-prospecting appointments — the V2 of a
-personal prototype, rebuilt with a clearer information architecture and a
-distinct visual identity.
+A mobile-first app to organize job-prospecting appointments — designed and
+built end-to-end as a personal project, from product spec to a real,
+installable iOS app.
 
-## Status
+![React](https://img.shields.io/badge/React-19-149ECA?logo=react&logoColor=white)
+![Vite](https://img.shields.io/badge/Vite-8-646CFF?logo=vite&logoColor=white)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3-38BDF8?logo=tailwindcss&logoColor=white)
+![Capacitor](https://img.shields.io/badge/Capacitor-iOS-119EFF?logo=capacitor&logoColor=white)
+![License: MIT](https://img.shields.io/badge/License-MIT-lightgrey)
 
-This repository currently implements **Módulo A — Schedule view**:
+## Table of contents
 
-- Three tabs: `Previous`, `Today`, `Upcoming`.
-- Automatic classification of appointments by date (see `src/lib/schedule.js`
-  for the exact rules).
-- `Previous` retains the last 30 days; `Upcoming` is a rolling 7-day window.
-- Appointment cards with priority color-coding (High/Medium/Low), showing
-  empty space for any field that wasn't filled in.
-- Sample data in `src/data/seedAppointments.js` so the screen is fully
-  visible before the creation flow (Módulo B) exists.
+- [About](#about)
+- [Features](#features)
+- [Stack](#stack)
+- [Running locally](#running-locally)
+- [Building the iOS app (Xcode)](#turning-this-into-an-installable-ios-app-xcode--capacitor)
+- [Project structure](#project-structure)
+- [Roadmap](#roadmap)
+- [Contributing](#contributing)
+- [License](#license)
 
-Módulo B (creation screen) and Módulo C (edit/duplicate/delete) are planned
-next — the `+` button is currently a placeholder.
+## About
+
+This app grew out of an earlier prototype (V1) built to track appointments
+tied to a job search — follow-ups, interviews, application deadlines. This
+version (V2) was rebuilt from the ground up with a clearer product spec and
+a distinct visual identity, then shipped as a real app on an iPhone using
+Capacitor.
+
+The full product-planning process — module inventory, functional decisions,
+and feature specs — is intentionally part of this project's story, not just
+the code.
+
+## Features
+
+- **Schedule view** with three tabs — `Previous`, `Today`, `Upcoming` —
+  appointments are classified automatically by date, with a rolling 7-day
+  window for `Upcoming` and a 30-day retention window for `Previous`.
+- **Appointment creation** on a dedicated screen: title, date, time,
+  priority, and notes — only the date is required.
+- **Visual priority picker** (a bottom drawer) instead of a plain dropdown,
+  color-coded High/Medium/Low.
+- **Long-press interactions** on any appointment card: Edit, Duplicate, or
+  Delete — no destructive action is ever a single accidental tap away.
+- **Delete confirmation with a 5-second undo window** before a deletion
+  becomes permanent.
+- **Local persistence** — no backend, no account, no login. Data lives on
+  the device.
 
 ## Stack
 
-- [Vite](https://vitejs.dev/) + React
+- [React](https://react.dev/) + [Vite](https://vitejs.dev/)
 - [Tailwind CSS](https://tailwindcss.com/) with a custom design-token set
   (see `tailwind.config.js`)
-- No backend, no database — data lives in the browser only for now
+- [Capacitor](https://capacitorjs.com/) to ship it as a real iOS app,
+  using Swift Package Manager (no CocoaPods needed)
+- No backend, no database — all data is local to the device for now
 
 ## Running locally
 
@@ -34,163 +66,72 @@ npm install
 npm run dev
 ```
 
-Open the local URL Vite prints (usually `http://localhost:5173`). The layout
-is mobile-first — use your browser's device toolbar, or open the URL
-directly on your phone while on the same network, to preview it as intended.
+Open the local URL Vite prints (usually `http://localhost:5173`). The
+layout is mobile-first — use your browser's device toolbar, or open the
+URL on your phone while on the same network, to preview it as intended.
 
-## Publishing this repo
-
-```bash
-git init
-git add .
-git commit -m "Módulo A: schedule view with Previous/Today/Upcoming tabs"
-git branch -M main
-git remote add origin <your-empty-github-repo-url>
-git push -u origin main
-```
-
-## Project structure
-
-```
-src/
-  components/   Presentational pieces (card, empty state, bottom nav)
-  data/         Seed data used until the creation flow exists
-  lib/          Date classification logic and formatting helpers
-  App.jsx       Schedule screen — assembles the module
-```
-
-## Important — how to actually view this
-
-**Do not double-click `index.html` directly.** Browsers block ES module
-scripts (`type="module"`) when opened via `file://`, so nothing will render
-and the page will look blank or broken — this is a browser security
-restriction, not a bug in the code.
-
-Two ways to view it correctly:
-
-1. **Development mode (recommended while building):**
-   ```bash
-   npm install
-   npm run dev
-   ```
-   Open the `http://localhost:5173` URL it prints.
-
-2. **Production build, served locally (closer to what GitHub Pages/Vercel will show):**
-   ```bash
-   npm install
-   npm run build
-   npx serve dist
-   ```
-   Open the URL it prints (usually `http://localhost:3000`).
-
-## Turning this into an installable iOS app (Xcode)
-
-This project already includes an `ios/` folder generated by
-[Capacitor](https://capacitorjs.com/), which wraps the web app into a real
-Xcode project. You need a Mac with Xcode installed (which you have).
-
-### One-time setup
-
-```bash
-npm install
-```
-
-CocoaPods is required by Capacitor's iOS integration. If you don't have it:
-
-```bash
-sudo gem install cocoapods
-```
-
-### Every time you change the app's code
-
-```bash
-npm run ios:sync
-```
-
-This builds the web app (`vite build`) and copies the result into the iOS
-project, so Xcode always shows your latest changes.
-
-### Opening and running it in Xcode
-
-```bash
-npm run ios:open
-```
-
-This opens `ios/App/App.xcworkspace` in Xcode. From there:
-
-1. In Xcode, select the **App** target, then go to **Signing & Capabilities**.
-2. Under **Team**, choose your Apple ID (add one via Xcode → Settings →
-   Accounts if you haven't yet — a free personal team works for installing
-   on your own device, no paid developer account needed).
-3. Plug your iPhone into the Mac via cable (or use the same Wi-Fi network
-   with wireless debugging enabled).
-4. In the device dropdown at the top of Xcode, select your iPhone.
-5. Press the ▶ (Run) button.
-
-The first time, your iPhone will show an "Untrusted Developer" warning —
-go to **Settings → General → VPN & Device Management** on the iPhone and
-trust your developer profile. Then the app opens like any installed app,
-with its own icon.
-
-### Important limitation of a free Apple ID (no paid developer account)
-
-Apps installed this way expire after **7 days** and need to be reinstalled
-by running from Xcode again. This is fine for personal testing/portfolio
-use; a paid Apple Developer account ($99/year) removes that limit and is
-only needed if you want to distribute via TestFlight or the App Store.
+> **Don't double-click `index.html` directly.** Browsers block ES module
+> scripts opened via `file://`, so the page will look blank. Always use
+> `npm run dev` (or `npm run build` + a local server) instead.
 
 ## Turning this into an installable iOS app (Xcode + Capacitor)
 
-This repo already includes the Capacitor setup and a generated `ios/` Xcode
-project — you don't need to run `cap add ios` yourself. This uses Swift
-Package Manager, not CocoaPods, so **Xcode is the only tool you need to
-install** beyond Node.js.
+This repo already includes the Capacitor setup and a generated `ios/`
+Xcode project. It uses Swift Package Manager, not CocoaPods, so **Xcode is
+the only extra tool you need** beyond Node.js.
 
 1. **Install dependencies and build the web app:**
    ```bash
    npm install
    npm run build
    ```
-
 2. **Copy the build into the iOS project:**
    ```bash
    npm run ios:sync
    ```
-   (This runs `vite build` + `npx cap sync ios` in one step. Re-run this
-   any time you change the app and want to see it on the phone again.)
-
 3. **Open the project in Xcode:**
    ```bash
    npm run ios:open
    ```
-   This opens `ios/App/App.xcodeproj` in Xcode automatically.
+4. In Xcode, select `App` in the sidebar → **Signing & Capabilities** →
+   choose your Apple ID under **Team** (any free Apple ID works).
+5. Connect your iPhone, select it as the run destination next to the Play
+   button, and press **Play**.
+6. On the iPhone: **Settings → General → VPN & Device Management** → trust
+   your developer certificate, then open the app.
 
-4. **In Xcode, sign the app with your Apple ID:**
-   - Click on `App` in the left sidebar (top item, blue icon).
-   - Go to the **Signing & Capabilities** tab.
-   - Under **Team**, choose your Apple ID (add it via Xcode → Settings →
-     Accounts, if it's not listed yet — any free Apple ID works).
-   - Xcode will auto-generate a free personal signing certificate.
+With a free Apple ID (no paid Developer Program), the installed app expires
+after 7 days — just repeat steps 5–6 to reinstall. The $99/year Apple
+Developer Program removes that limit and is only needed for App Store
+distribution.
 
-5. **Connect your iPhone and select it as the run target:**
-   - Plug your iPhone into the Mac with a cable.
-   - On the iPhone, tap **Trust This Computer** if prompted.
-   - In Xcode's toolbar (top), click the device dropdown (next to the
-     Play button) and select your iPhone.
+Any time you change the code: `npm run ios:sync`, then press Play again.
 
-6. **Press the Play (▶) button in Xcode.** It builds and installs the app
-   on your phone.
+## Project structure
 
-7. **On the iPhone, allow the developer certificate:**
-   - Go to **Settings → General → VPN & Device Management**.
-   - Tap your Apple ID under "Developer App", then **Trust**.
-   - Open the app from the Home Screen.
+```
+src/
+  components/   Presentational pieces (card, popups, drawers, nav)
+  data/         Seed data used to preview the app
+  lib/          Date classification, storage, and interaction helpers
+  screens/      Full-page screens (e.g. the appointment form)
+  App.jsx       Top-level state and screen orchestration
+ios/            Generated Capacitor/Xcode project — don't hand-edit
+```
 
-### Good to know
+## Roadmap
 
-- With a **free Apple ID** (no paid Developer Program), the app expires
-  after **7 days** — after that, just repeat steps 6–7 to reinstall it.
-  Paying $99/year for the Apple Developer Program removes that limit and
-  is required only if you ever want to publish to the App Store.
-- Any time you change the React code, re-run `npm run ios:sync`, then
-  press Play in Xcode again.
+Ideas parked for later, not yet built:
+
+- Connecting the schedule to Apple Calendar and/or Google Calendar.
+- Revisiting whether "empty" appointments (only a date, no other field)
+  should be preventable, based on real usage.
+
+## Contributing
+
+Contributions are welcome — see [CONTRIBUTING.md](./CONTRIBUTING.md) for
+setup steps, project conventions, and how to open a pull request.
+
+## License
+
+[MIT](./LICENSE)
